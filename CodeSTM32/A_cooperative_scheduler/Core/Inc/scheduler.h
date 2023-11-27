@@ -22,13 +22,13 @@ void ( * pTask ) ( void ) ;
 uint32_t Delay ;
 // Interval ( ticks ) between subsequent runs .
 uint32_t Period ;
-// Incremented (by scheduler) when task i s due to execute
+// Incremented (by scheduler) when task is due to execute
 uint8_t RunMe;
-//This i s a hint to solve the question below .
+//This is a hint to solve the question below .
 uint32_t TaskID ;
 } sTask ;
 
-
+uint8_t SCH_Delete_Task(uint32_t taskID);
 void SCH_int(void);
 uint32_t SCH_Add_Task (void (*pFunction)(),
 			uint32_t DELAY, uint32_t PERIOD);

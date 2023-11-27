@@ -56,7 +56,48 @@ static void MX_GPIO_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+void toggleLed(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
+{
+	HAL_GPIO_TogglePin(GPIOx, GPIO_Pin);
+}
 
+void led1()
+{
+	toggleLed(LED_1_GPIO_Port, LED_1_Pin);
+}
+
+void led2()
+{
+	toggleLed(LED_2_GPIO_Port, LED_2_Pin);
+}
+
+void led3()
+{
+	toggleLed(LED_3_GPIO_Port, LED_3_Pin);
+}
+
+void led4()
+{
+	toggleLed(LED_4_GPIO_Port, LED_4_Pin);
+}
+
+void led5()
+{
+	toggleLed(LED_5_GPIO_Port, LED_5_Pin);
+}
+
+void ledOneTask()
+{
+	toggleLed(LED_ONE_TASK_GPIO_Port, LED_ONE_TASK_Pin);
+}
+
+void ledButton()
+{
+	if (isButtonPressed(0))
+	{
+		toggleLed(LED_BUTTON_GPIO_Port, LED_BUTTON_Pin);
+	}
+}
 /* USER CODE END 0 */
 
 /**
@@ -89,16 +130,32 @@ int main(void)
   MX_TIM2_Init();
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-  HAL_TIM_Base_Start_IT (& htim2 ) ;
+  HAL_TIM_Base_Start_IT (& htim2);
+  SCH_Init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
+  // Add 5 tasks running periodically
+  SCH_Add_Task(led1, 500, 500);
+  SCH_Add_Task(led2, 1000, 1000);
+  SCH_Add_Task(led3, 1500, 1500);
+  SCH_Add_Task(led4, 2000, 2000);
+  SCH_Add_Task(led5, 2500, 2500);
+
+  //Add "One-shot" task
+  SCH_Add_Task(ledOneTask, 2000, 0);
+
+  //Add "LED be controlled by button" task
+  SCH_Add_Task(ledButton, TIME_CYCLE, TIME_CYCLE);
+
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	  SCH_Dispatch_Tasks();
   }
   /* USER CODE END 3 */
 }
@@ -178,8 +235,8 @@ static void MX_TIM2_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN TIM2_Init 2 */
-  // TIME_CYCLE = 1/(8e6/(htim2.Init.Prescaler + 1)
- //		  	  	  	  /(htim2.Init.Period + 1)) * 1000; // Time cycle
+  TIME_CYCLE = 1/(8e6/(htim2.Init.Prescaler + 1)
+ 		  	  	  	  /(htim2.Init.Period + 1)) * 1000; // Time cycle
   /* USER CODE END TIM2_Init 2 */
 
 }
@@ -220,7 +277,8 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 void HAL_TIM_PeriodElapsedCallback ( TIM_HandleTypeDef * htim )
 {
-
+	SCH_Update();
+	getKeyInput();
 }
 /* USER CODE END 4 */
 
