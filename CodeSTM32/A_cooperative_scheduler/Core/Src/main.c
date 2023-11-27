@@ -148,7 +148,7 @@ int main(void)
   SCH_Add_Task(ledOneTask, 2000, 0);
 
   //Add "LED be controlled by button" task
-  SCH_Add_Task(ledButton, TIME_CYCLE, TIME_CYCLE);
+  SCH_Add_Task(ledButton, 0, 1000);
 
   while (1)
   {
